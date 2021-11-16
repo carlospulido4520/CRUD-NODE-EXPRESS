@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 
+require('dotenv').config();
 
 class Server {
 
@@ -19,12 +20,12 @@ class Server {
 
     middlewares() {
         this.app.use(cors());
-        this.app.use( express.json());
+        this.app.use(express.json());
     }
 
     listen() {
-        this.app.listen(3000, () => {
-            console.log("El servidor está inicializado en el puerto 3000");
+        this.app.listen(process.env.PORT, () => {
+            console.log("El servidor está inicializado en el puerto " + process.env.PORT);
         });
     }
 
