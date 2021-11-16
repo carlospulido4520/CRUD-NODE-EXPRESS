@@ -15,6 +15,9 @@ class Server {
     }
 
     routes() {
+        this.app.get('*', (req, res) => {
+            res.send('404 | API no encontrada')
+        });
         this.app.use(this.usersPath, require('../routes/user.routes'));
     }
 

@@ -10,8 +10,4 @@ router.put('/:id', usuarioPut);
 
 router.delete('/:id', usuarioDelete);
 
-router.get('*', (req, res) => {
-    res.send('404 | API no encontrada')
-});
-
 module.exports = router;
