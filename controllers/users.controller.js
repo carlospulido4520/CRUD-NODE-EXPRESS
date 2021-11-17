@@ -1,46 +1,49 @@
-const { response, request} = require('express');
+const { response, request } = require('express');
+const User = require('../models/user');
 
-const usuariosGet = (req = request, res = response ) => {
-    res.json(
-        {
-            "Title": "GET USER"
-        }
-    );
+const bcrypt = require('bcryptjs');
+
+
+const usuariosGet = async (req = request, res = response) => {
+    const users = await User.find();
+    res.json(users);
 }
 
-const usuarioPost = (req = request, res = response ) => {
+const usuarioPost = async (req = request, res = response) => {
 
-    const body = req.body;
+    const { name, email, password, role } = req.body;
+    const user = new User({ name, email, password, role });
 
-    res.json(
-        {
-            "Title": "POST USER",
-            body
-        }
-    );
+    // Encriptar contraseña
+    const salt = bcrypt.genSaltSync();
+    user.password = bcrypt.hashSync(password, salt);
+
+    await user.save();
+
+    res.json(user);
 }
 
-const usuarioPut = (req = request, res = response ) => {
+const usuarioPut = async (req = request, res = response) => {
 
-    const idHeader = req.params.id;
+    const { id } = req.params;
+    const { _id, password, google, ...user } = req.body;
 
-    res.json(
-        {
-            "Title": "PUT USER",
-            idHeader
-        }
-    );
+    if (password) {
+        const salt = bcrypt.genSaltSync();
+        user.password = bcrypt.hashSync(password, salt);
+    }
+
+    const userDB = await User.findByIdAndUpdate(id, user, { new: true });
+
+    res.json(userDB);
 }
 
-const usuarioDelete = (req = request, res = response ) => {
+const usuarioDelete = async (req = request, res = response) => {
 
-    const idHeader = req.params.id;
+    const { id } = req.params;
+    const userDB = await User.findByIdAndUpdate(id, { status: false }, { new: true });
 
-    res.json(
-        {
-            "Title": "DELETE USER"
-        }
-    );
+    res.json(userDB)
 }
 
 
